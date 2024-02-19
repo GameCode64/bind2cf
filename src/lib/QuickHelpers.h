@@ -65,7 +65,6 @@ using namespace std;
 class QuickHelpers {
 public:
 	QuickHelpers();
-	bool Exists(const std::string& name);
 	string B64E(const string& Str);
 	string B64D(const string& EncStr);
 	string XOR_String(string Input);

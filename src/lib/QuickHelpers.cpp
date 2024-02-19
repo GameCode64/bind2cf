@@ -8,11 +8,6 @@ QuickHelpers::QuickHelpers()
 	srand((int)time(0));
 }
 
-bool QuickHelpers::Exists(const std::string& name) {
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
-}
-
 //Base 64 Encode
 string QuickHelpers::B64E(const string& Str) {
 	const char* BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
