@@ -1,11 +1,13 @@
 .vs/*
 .vscode/*
 out/*
+
 ./build/*
+build/*
+
 ./src/sdk/*
 src/sdk/*
 curl/*
-*/build/*
 # Prerequisites
 *.d
 
