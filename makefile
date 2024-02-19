@@ -4,6 +4,7 @@ CODEFILES := $(shell find ./src/ -type d -name out -prune -type d -name downlib 
 #	echo "$(CU)" 
 #	mkdir -p $(CU)/build
 
+
 buildtest:
 	@mkdir -p "$(CU)/build"
 	@mkdir -p "$(CU)/ext/downlib"
@@ -15,3 +16,10 @@ cleantest:
 	@rm -rfv $(CU)./build
 	@rm -fv boostsdk.tar.gz
 	@rm -rfv "$(CU)/src/sdk"
+
+	
+check:
+	echo "OK"
+
+install: 
+	echo "not supported yet"
