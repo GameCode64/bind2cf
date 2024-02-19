@@ -8,7 +8,7 @@ buildtest:
 	@mkdir -p "$(CU)/build"
 	@mkdir -p "$(CU)/ext/downlib"
 	gcc $(CODEFILES) -lcurl -fconcepts -lstdc++ -o "$(CU)/build/b2c"
-	@chmod +x "$(CU)/build"
+	@chmod +x "$(CU)/build/b2c"
 	@cd "$(CU)"
 	
 cleantest:
