@@ -1,7 +1,10 @@
 #include "Main.h"
 using namespace std;
+
+QuickHelpers* QH;
+
 int main(int argc, char* argv[])
 {
-    cout << "testttt";
+
     return 0;
 }

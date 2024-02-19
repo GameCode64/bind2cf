@@ -26,3 +26,5 @@ distcheck:
 
 install: 
 	echo "not supported yet"
+
+
