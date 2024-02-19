@@ -8,7 +8,7 @@ CODEFILES := $(shell find ./src/ -type d -name out -prune -type d -name downlib 
 buildtest:
 	@mkdir -p "$(CU)/build"
 	@mkdir -p "$(CU)/ext/downlib"
-	gcc $(CODEFILES) -lcurl -fconcepts -lstdc++ -o "$(CU)/build/b2c"
+	gcc $(CODEFILES) -lcurl -lcrypto -lz -fconcepts -lstdc++ -o "$(CU)/build/b2c"
 	@chmod +x "$(CU)/build/b2c"
 	@cd "$(CU)"
 	

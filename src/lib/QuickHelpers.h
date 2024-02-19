@@ -11,12 +11,15 @@
 #include <memory>
 #include <stdexcept>
 #include <array>
+#include <iomanip>
+#include <zlib.h>
+#include <algorithm>
+#include <sys/stat.h>
+#include <openssl/aes.h>
+#include <typeinfo>
 #ifndef _WIN32
 #include <unistd.h>
-#else
-#include <io.h>
 #endif
-
 
 //Timing
 #define SECONDS					1000
@@ -62,8 +65,17 @@ using namespace std;
 class QuickHelpers {
 public:
 	QuickHelpers();
+	bool Exists(const std::string& name);
+	string B64E(const string& Str);
+	string B64D(const string& EncStr);
+	string XOR_String(string Input);
+	string Encrypt(string plaintext, string key);
+	string Decrypt(string ciphertext, string key);
+	string CompressString(const string& str);
+	string DecompressString(const string& str);
     bool FileExist(string FileName);
 	string ReadFile(string Filepath);
+	void WriteFile(string FilePath, string Text, bool Append);
 	string StrToUpper(string String);
 	string StrToLower(string String);
 	string BackgroundTag(int BackColor);
