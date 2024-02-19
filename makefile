@@ -19,6 +19,9 @@ cleantest:
 
 	
 check:
+	echo "OK"	
+	
+distcheck:
 	echo "OK"
 
 install: 
