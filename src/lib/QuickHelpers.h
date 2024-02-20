@@ -12,13 +12,17 @@
 #include <stdexcept>
 #include <array>
 #include <iomanip>
+#include <regex>
 #include <zlib.h>
 #include <algorithm>
 #include <sys/stat.h>
 #include <openssl/aes.h>
 #include <typeinfo>
 #ifndef _WIN32
+#include <termios.h>
 #include <unistd.h>
+#else
+#include <windows.h>
 #endif
 
 //Timing
@@ -65,6 +69,7 @@ using namespace std;
 class QuickHelpers {
 public:
 	QuickHelpers();
+	string ReadSecret();
 	string B64E(const string& Str);
 	string B64D(const string& EncStr);
 	string XOR_String(string Input);
@@ -91,8 +96,8 @@ public:
 	string parseString(auto input);
 	string sRand(const int len);
 	string exec(const char* cmd);
-	void Write(std::string Output, int TextType = 0, int ForeColor = 0, int BackColor = 0);
-	void WriteLine(std::string Output, int TextType = 0, int ForeColor = 0, int BackColor = 0);
+	void Write(string Output, int TextType = 0, int ForeColor = 0, int BackColor = 0);
+	void WriteLine(string Output, int TextType = 0, int ForeColor = 0, int BackColor = 0);
 	int iRand();
 	int iRand(int Start, int End);
 	//~QuickHelpers();

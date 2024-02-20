@@ -1,46 +1,78 @@
 #include "QuickHelpers.h"
 using namespace std;
 
-
 QuickHelpers::QuickHelpers()
 {
-	//test constructor
+	// test constructor
 	srand((int)time(0));
 }
 
-//Base 64 Encode
-string QuickHelpers::B64E(const string& Str) {
-	const char* BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+// Hidden console input
+string QuickHelpers::ReadSecret()
+{
+	string Input;
+#ifdef _WIN32
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode = 0;
+	GetConsoleMode(hStdin, &mode);
+	SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
+	getline(cin, Input);
+	SetConsoleMode(hStdin, mode & (ENABLE_ECHO_INPUT));
+	return Input;
+#else
+	termios OldTerm;
+    tcgetattr(STDIN_FILENO, &OldTerm);
+    termios NewTerm = OldTerm;
+	OldTerm.c_lflag &= ECHO;
+    NewTerm.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &NewTerm);
+    getline(cin, Input);
+    tcsetattr(STDIN_FILENO, TCSANOW, &OldTerm);
+	return Input;
+#endif
+}
+
+// Base 64 Encode
+string QuickHelpers::B64E(const string &Str)
+{
+	const char *BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	string Out;
 	int i = 0;
 	int j = 0;
 	unsigned char char_array_3[3];
 	unsigned char char_array_4[4];
-	for (unsigned char c : Str) {
+	for (unsigned char c : Str)
+	{
 		char_array_3[i++] = c;
-		if (i == 3) {
+		if (i == 3)
+		{
 			char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
 			char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
 			char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
 			char_array_4[3] = char_array_3[2] & 0x3f;
-			for (i = 0; i < 4; i++) {
+			for (i = 0; i < 4; i++)
+			{
 				Out += BASE64_CHARS[char_array_4[i]];
 			}
 			i = 0;
 		}
 	}
-	if (i) {
-		for (j = i; j < 3; j++) {
+	if (i)
+	{
+		for (j = i; j < 3; j++)
+		{
 			char_array_3[j] = '\0';
 		}
 		char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
 		char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
 		char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
 		char_array_4[3] = char_array_3[2] & 0x3f;
-		for (j = 0; j < i + 1; j++) {
+		for (j = 0; j < i + 1; j++)
+		{
 			Out += BASE64_CHARS[char_array_4[j]];
 		}
-		while ((i++ < 3)) {
+		while ((i++ < 3))
+		{
 			Out += '=';
 		}
 	}
@@ -48,62 +80,73 @@ string QuickHelpers::B64E(const string& Str) {
 	return Out;
 }
 
-//Base 64 Decode
-string QuickHelpers::B64D(const string& EncStr) {
-	const char* BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+// Base 64 Decode
+string QuickHelpers::B64D(const string &EncStr)
+{
+	const char *BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	string Out;
 	int i = 0, j = 0;
 	unsigned char char_array_4[4], char_array_3[3];
-	for (const auto& c : EncStr) {
+	for (const auto &c : EncStr)
+	{
 		if (c == '=')
 			break;
 		char_array_4[i++] = c;
-		if (i == 4) {
-			for (i = 0; i < 4; i++) {
+		if (i == 4)
+		{
+			for (i = 0; i < 4; i++)
+			{
 				char_array_4[i] = strchr(BASE64_CHARS, char_array_4[i]) - BASE64_CHARS;
 			}
 			char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
 			char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 			char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
-			for (i = 0; i < 3; i++) {
+			for (i = 0; i < 3; i++)
+			{
 				Out += char_array_3[i];
 			}
 			i = 0;
 		}
 	}
-	if (i) {
-		for (j = i; j < 4; j++) {
+	if (i)
+	{
+		for (j = i; j < 4; j++)
+		{
 			char_array_4[j] = 0;
 		}
-		for (j = 0; j < 4; j++) {
+		for (j = 0; j < 4; j++)
+		{
 			char_array_4[j] = strchr(BASE64_CHARS, char_array_4[j]) - BASE64_CHARS;
 		}
 		char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
 		char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 		char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
-		for (j = 0; j < i - 1; j++) {
+		for (j = 0; j < i - 1; j++)
+		{
 			Out += char_array_3[j];
 		}
 	}
 	return Out;
 }
 
-
-string QuickHelpers::XOR_String(string a) {
+string QuickHelpers::XOR_String(string a)
+{
 	string c = "";
 	int b = a.length();
-	for (int i = 0; i < b; ++i) {
+	for (int i = 0; i < b; ++i)
+	{
 		c += char(int(a[i]) ^ ((205 + ((b + i) + 2)) % 205));
 	}
 	return c;
 }
 
-
-string QuickHelpers::Encrypt(string plaintext, string key) {
+string QuickHelpers::Encrypt(string plaintext, string key)
+{
 	// Convert key to AES key format
 	unsigned char aes_key[16];
 	memset(aes_key, 0, 16);
-	for (int i = 0; i < min((int)key.length(), 16); i++) {
+	for (int i = 0; i < min((int)key.length(), 16); i++)
+	{
 		aes_key[i] = key[i];
 	}
 
@@ -117,31 +160,37 @@ string QuickHelpers::Encrypt(string plaintext, string key) {
 	memset(iv, 0, AES_BLOCK_SIZE);
 	int len = plaintext.length();
 	int remaining = len % AES_BLOCK_SIZE;
-	if (remaining != 0) {
+	if (remaining != 0)
+	{
 		plaintext += string(AES_BLOCK_SIZE - remaining, ' ');
 	}
-	for (int i = 0; i < len; i += AES_BLOCK_SIZE) {
+	for (int i = 0; i < len; i += AES_BLOCK_SIZE)
+	{
 		unsigned char indata[AES_BLOCK_SIZE];
 		memset(indata, 0, AES_BLOCK_SIZE);
-		for (int j = 0; j < AES_BLOCK_SIZE; j++) {
-			if (i + j < len) {
+		for (int j = 0; j < AES_BLOCK_SIZE; j++)
+		{
+			if (i + j < len)
+			{
 				indata[j] = plaintext[i + j];
 			}
 		}
 		unsigned char outdata[AES_BLOCK_SIZE];
 		memset(outdata, 0, AES_BLOCK_SIZE);
 		AES_cbc_encrypt(indata, outdata, AES_BLOCK_SIZE, &aes, iv, AES_ENCRYPT);
-		ciphertext += string((char*)outdata, AES_BLOCK_SIZE);
+		ciphertext += string((char *)outdata, AES_BLOCK_SIZE);
 	}
 
 	return ciphertext;
 }
 
-string QuickHelpers::Decrypt(string ciphertext, string key) {
+string QuickHelpers::Decrypt(string ciphertext, string key)
+{
 	// Convert key to AES key format
 	unsigned char aes_key[16];
 	memset(aes_key, 0, 16);
-	for (int i = 0; i < min((int)key.length(), 16); i++) {
+	for (int i = 0; i < min((int)key.length(), 16); i++)
+	{
 		aes_key[i] = key[i];
 	}
 
@@ -154,23 +203,27 @@ string QuickHelpers::Decrypt(string ciphertext, string key) {
 	unsigned char iv[AES_BLOCK_SIZE];
 	memset(iv, 0, AES_BLOCK_SIZE);
 	int len = ciphertext.length();
-	for (int i = 0; i < len; i += AES_BLOCK_SIZE) {
+	for (int i = 0; i < len; i += AES_BLOCK_SIZE)
+	{
 		unsigned char indata[AES_BLOCK_SIZE];
 		memset(indata, 0, AES_BLOCK_SIZE);
-		for (int j = 0; j < AES_BLOCK_SIZE; j++) {
-			if (i + j < len) {
+		for (int j = 0; j < AES_BLOCK_SIZE; j++)
+		{
+			if (i + j < len)
+			{
 				indata[j] = ciphertext[i + j];
 			}
 		}
 		unsigned char outdata[AES_BLOCK_SIZE];
 		memset(outdata, 0, AES_BLOCK_SIZE);
 		AES_cbc_encrypt(indata, outdata, AES_BLOCK_SIZE, &aes, iv, AES_DECRYPT);
-		plaintext += string((char*)outdata, AES_BLOCK_SIZE);
+		plaintext += string((char *)outdata, AES_BLOCK_SIZE);
 	}
 
 	// Remove padding from plaintext
 	int padlen = plaintext[plaintext.length() - 1];
-	if (padlen < 1 || padlen > AES_BLOCK_SIZE) {
+	if (padlen < 1 || padlen > AES_BLOCK_SIZE)
+	{
 		padlen = 0;
 	}
 	plaintext = plaintext.substr(0, plaintext.length() - padlen);
@@ -178,24 +231,27 @@ string QuickHelpers::Decrypt(string ciphertext, string key) {
 	return plaintext;
 }
 
-string QuickHelpers::CompressString(const string& Str) {
+string QuickHelpers::CompressString(const string &Str)
+{
 	stringstream compressed;
 	z_stream deflate_stream;
 	deflate_stream.zalloc = Z_NULL;
 	deflate_stream.zfree = Z_NULL;
 	deflate_stream.opaque = Z_NULL;
 	deflate_stream.avail_in = Str.size();
-	deflate_stream.next_in = (Bytef*)(Str.c_str());
+	deflate_stream.next_in = (Bytef *)(Str.c_str());
 	deflate_stream.avail_out = 32768;
-	deflate_stream.next_out = (Bytef*)(&compressed.str()[0]);
-	if (deflateInit(&deflate_stream, Z_DEFAULT_COMPRESSION) != Z_OK) {
+	deflate_stream.next_out = (Bytef *)(&compressed.str()[0]);
+	if (deflateInit(&deflate_stream, Z_DEFAULT_COMPRESSION) != Z_OK)
+	{
 		return "";
 	}
 	int ret;
 	char outbuffer[32768];
-	do {
+	do
+	{
 		deflate_stream.avail_out = 32768;
-		deflate_stream.next_out = (Bytef*)(outbuffer);
+		deflate_stream.next_out = (Bytef *)(outbuffer);
 		ret = deflate(&deflate_stream, Z_FINISH);
 		compressed.write(outbuffer, 32768 - deflate_stream.avail_out);
 	} while (deflate_stream.avail_out == 0);
@@ -203,26 +259,30 @@ string QuickHelpers::CompressString(const string& Str) {
 	return compressed.str();
 }
 
-string QuickHelpers::DecompressString(const string& Str) {
+string QuickHelpers::DecompressString(const string &Str)
+{
 	stringstream decompressed;
 	z_stream inflate_stream;
 	inflate_stream.zalloc = Z_NULL;
 	inflate_stream.zfree = Z_NULL;
 	inflate_stream.opaque = Z_NULL;
 	inflate_stream.avail_in = Str.size();
-	inflate_stream.next_in = (Bytef*)(Str.c_str());
+	inflate_stream.next_in = (Bytef *)(Str.c_str());
 	inflate_stream.avail_out = 32768;
-	inflate_stream.next_out = (Bytef*)(&decompressed.str()[0]);
-	if (inflateInit(&inflate_stream) != Z_OK) {
+	inflate_stream.next_out = (Bytef *)(&decompressed.str()[0]);
+	if (inflateInit(&inflate_stream) != Z_OK)
+	{
 		return "";
 	}
 	int ret;
 	char outbuffer[32768];
-	do {
+	do
+	{
 		inflate_stream.avail_out = 32768;
-		inflate_stream.next_out = (Bytef*)(outbuffer);
+		inflate_stream.next_out = (Bytef *)(outbuffer);
 		ret = inflate(&inflate_stream, 0);
-		if (ret != Z_OK && ret != Z_STREAM_END) {
+		if (ret != Z_OK && ret != Z_STREAM_END)
+		{
 			inflateEnd(&inflate_stream);
 			return "";
 		}
@@ -232,17 +292,15 @@ string QuickHelpers::DecompressString(const string& Str) {
 	return decompressed.str();
 }
 
-
 bool QuickHelpers::FileExist(string FileName)
 {
-    #ifdef _WIN32
-    ifstream f(FileName.c_str());
-    return f.good();
-    #else
-    return ( access( FileName.c_str(), F_OK ) != -1 );
-    #endif
+#ifdef _WIN32
+	ifstream f(FileName.c_str());
+	return f.good();
+#else
+	return (access(FileName.c_str(), F_OK) != -1);
+#endif
 }
-
 
 string QuickHelpers::ReadFile(string FilePath)
 {
@@ -251,7 +309,7 @@ string QuickHelpers::ReadFile(string FilePath)
 	ifstream FileStream(FilePath);
 	if (FileStream.is_open())
 	{
-		while ( getline(FileStream, TmpLine) )
+		while (getline(FileStream, TmpLine))
 		{
 			Lines += TmpLine + "\n";
 		}
@@ -390,38 +448,37 @@ string QuickHelpers::TextTypeTag(int Type)
 
 string QuickHelpers::parseString(int input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(bool input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(float input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(char input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
-
 
 string QuickHelpers::parseString(double input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(long input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(size_t input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
 string QuickHelpers::parseString(string input)
@@ -430,26 +487,30 @@ string QuickHelpers::parseString(string input)
 }
 string QuickHelpers::parseString(auto input)
 {
-	return std::to_string(input);
+	return to_string(input);
 }
 
-string QuickHelpers::exec(const char* cmd) {
-	std::array<char, 128> buffer;
-	std::string result;
+string QuickHelpers::exec(const char *cmd)
+{
+	array<char, 128> buffer;
+	string result;
 #ifdef _WIN32
-	std::shared_ptr<FILE> pipe(_popen(cmd, "r"), _pclose);
-#else// _WIN32
-	std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+	shared_ptr<FILE> pipe(_popen(cmd, "r"), _pclose);
+#else // _WIN32
+	shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
 #endif
-	if (!pipe) throw std::runtime_error("popen() failed!");
-	while (!feof(pipe.get())) {
+	if (!pipe)
+		throw runtime_error("popen() failed!");
+	while (!feof(pipe.get()))
+	{
 		if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
 			result += buffer.data();
 	}
 	return result;
 }
 
-string QuickHelpers::sRand(const int len) {
+string QuickHelpers::sRand(const int len)
+{
 
 	string tmp_s;
 	static const char alphanum[] =
@@ -461,35 +522,32 @@ string QuickHelpers::sRand(const int len) {
 	for (int i = 0; i < len; ++i)
 		tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
 
-
 	return tmp_s;
 }
 
-void QuickHelpers::Write(std::string Output, int TextType, int ForeColor, int BackColor)
+void QuickHelpers::Write(string Output, int TextType, int ForeColor, int BackColor)
 {
 	string _Output;
 	_Output = "\033[" + TextTypeTag(TextType) + BackgroundTag(BackColor) + ForegroundTag(ForeColor) + Output + "\033[0m";
 	cout << _Output;
 }
 
-void QuickHelpers::WriteLine(std::string Output, int TextType, int ForeColor, int BackColor)
+void QuickHelpers::WriteLine(string Output, int TextType, int ForeColor, int BackColor)
 {
 	string _Output;
 	_Output = "\033[" + TextTypeTag(TextType) + BackgroundTag(BackColor) + ForegroundTag(ForeColor) + Output + "\033[0m";
 	cout << _Output << endl;
 }
 
-int QuickHelpers::iRand() {
+int QuickHelpers::iRand()
+{
 	return rand() % 1000;
 }
 
-int QuickHelpers::iRand(int Start, int End) {
+int QuickHelpers::iRand(int Start, int End)
+{
 	return rand() % (End - Start) + Start;
 }
-
-
-
-
 
 /*QuickHelpers::~QuickHelpers()
 {
