@@ -14,6 +14,7 @@ namespace BindModelNS
         }
 
         string Line;
+        string TTL = "300";
         while (getline(File, Line))
         {
             if (Line.empty() || Line[0] == ';')
@@ -28,17 +29,21 @@ namespace BindModelNS
                     continue;
                 }
             }
-
+            
             istringstream Iss(Line);
             vector<string> Tkn{
                 istream_iterator<string>{Iss},
                 istream_iterator<string>{}};
+            if( Tkn.size() == 2 && Tkn[0] == "$ttl")
+            {
+                TTL = Tkn[1];
+            }
 
             if (Tkn.size() >= 3)
             {
                 DNSRecord Record;
                 int TknSkip = 0;
-                Record.TTL = "";
+                Record.TTL = TTL;
                 if (Tkn[2] == "IN")
                 {
                     TknSkip = 1;
