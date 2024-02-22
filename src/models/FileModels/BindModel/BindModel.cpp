@@ -14,12 +14,23 @@ namespace BindModelNS
         }
 
         string Line;
+        string SOARecord;
         string TTL = "300";
         while (getline(File, Line))
         {
+            istringstream Iss(Line);
+            vector<string> Tkn{
+                istream_iterator<string>{Iss},
+                istream_iterator<string>{}};
             if (Line.empty() || Line[0] == ';')
             {
                 continue;
+            }
+
+            if (Line.find("IN SOA") != string::npos)
+            {
+                SOARecord = Line;
+                break;
             }
 
             if (Skip > 0)
@@ -29,12 +40,8 @@ namespace BindModelNS
                     continue;
                 }
             }
-            
-            istringstream Iss(Line);
-            vector<string> Tkn{
-                istream_iterator<string>{Iss},
-                istream_iterator<string>{}};
-            if( Tkn.size() == 2 && Tkn[0] == "$ttl")
+
+            if (Tkn.size() == 2 && Tkn[0] == "$ttl")
             {
                 TTL = Tkn[1];
             }
@@ -50,15 +57,14 @@ namespace BindModelNS
                     Record.TTL = Tkn[1];
                 }
                 Record.Host = Tkn[0];
-                Record.Type = Tkn[2+TknSkip];
+                Record.Type = Tkn[2 + TknSkip];
                 Record.Destination = "";
-                for (size_t i = 3+TknSkip; i < Tkn.size(); ++i)
+                for (size_t i = 3 + TknSkip; i < Tkn.size(); ++i)
                 {
                     Record.Destination += Tkn[i] + " ";
                 }
-                //removing trailing spaces
+                // removing trailing spaces
                 Record.Destination = Record.Destination.substr(0, Record.Destination.size() - 1);
-                // Record.Destination = (Tkn.size() >= 4) ? Tkn[3] : "";
 
                 DnsRecords.push_back(Record);
             }
