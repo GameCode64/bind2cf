@@ -21,13 +21,13 @@ string QuickHelpers::ReadSecret()
 	return Input;
 #else
 	termios OldTerm;
-    tcgetattr(STDIN_FILENO, &OldTerm);
-    termios NewTerm = OldTerm;
+	tcgetattr(STDIN_FILENO, &OldTerm);
+	termios NewTerm = OldTerm;
 	OldTerm.c_lflag &= ECHO;
-    NewTerm.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &NewTerm);
-    getline(cin, Input);
-    tcsetattr(STDIN_FILENO, TCSANOW, &OldTerm);
+	NewTerm.c_lflag &= ~ECHO;
+	tcsetattr(STDIN_FILENO, TCSANOW, &NewTerm);
+	getline(cin, Input);
+	tcsetattr(STDIN_FILENO, TCSANOW, &OldTerm);
 	return Input;
 #endif
 }

@@ -13,12 +13,12 @@
 #include <array>
 #include <iomanip>
 #include <regex>
-#include <zlib.h>
 #include <algorithm>
 #include <sys/stat.h>
-#include <openssl/aes.h>
 #include <typeinfo>
 #ifndef _WIN32
+#include <zlib.h>
+#include <openssl/aes.h>
 #include <termios.h>
 #include <unistd.h>
 #else

@@ -56,7 +56,8 @@ namespace BindModelNS
                     TknSkip = 1;
                     Record.TTL = Tkn[1];
                 }
-                Record.Host = Tkn[0];
+                string TName = Tkn[0];
+                Record.Host = TName.substr(0, TName.size()-1);
                 Record.Type = Tkn[2 + TknSkip];
                 Record.Destination = "";
                 for (size_t i = 3 + TknSkip; i < Tkn.size(); ++i)
@@ -72,4 +73,33 @@ namespace BindModelNS
 
         return DnsRecords;
     }
+    vector<json> BindModel::CompareJsonFiles(const vector<json> &first, const vector<json> &second, const string &source1, const string &source2)
+    {
+        // Convert vectors to sets for efficient comparison
+        set<json> set1(first.begin(), first.end());
+        set<json> set2(second.begin(), second.end());
+
+        vector<json> differences;
+
+        
+
+        // Find the symmetric difference between the sets
+        set_symmetric_difference(set1.begin(), set1.end(), set2.begin(), set2.end(), back_inserter(differences));
+
+        // Add source information to the differences
+        for (auto &record : differences)
+        {
+            if (set1.find(record) != set1.end())
+            {
+                record["Source"] = source1;
+            }
+            else if (set2.find(record) != set2.end())
+            {
+                record["Source"] = source2;
+            }
+        }
+
+        return differences;
+    }
+
 }
