@@ -28,7 +28,7 @@ cat << 'EOF' > /etc/bind2cf/conf.json
 EOF
 
 
-cat << 'EOF' > /etc/bind2cf/conf.json
+cat << 'EOF' > /etc/bind2cf/mount.json
 [
   {
     "domain": "## Domainname ##",
