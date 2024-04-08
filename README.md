@@ -14,3 +14,28 @@ Like for example to run with virtualmin to request a wildcard certificate for yo
 
 ## Installation
 There is no official installation procedure yet, till the alpha phase
+
+### Required files placement
+```sh
+mkdir -p /etc/bind2cf
+cat << 'EOF' > /etc/bind2cf/conf.json
+{
+        "apikey":"## Cloudflare API key ##",
+        "tmpfolder":"/tmp/bind2cf",
+        "syncdirection": 0 ,
+        "key": ""
+}
+EOF
+
+
+cat << 'EOF' > /etc/bind2cf/conf.json
+[
+  {
+    "domain": "## Domainname ##",
+    "cloudflareID": "## CloudflareID of the zone ##",
+    "bindfile": "## Path to the bindfile to link the zone ##"
+  }
+]
+EOF
+
+```
