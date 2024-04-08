@@ -39,3 +39,14 @@ cat << 'EOF' > /etc/bind2cf/mount.json
 EOF
 
 ```
+
+# Credits
+The creators of certain projects I use in this project as libraries, deserves some credits for their work.
+
+The following libraries are in {Projectfolder}/src/lib
+
+ - Json engine: https://github.com/nlohmann/json
+ - Restclient: https://github.com/mrtazz/restclient-cpp
+ - QuickHelpers: Me (GameCode64/Ricky Visser)
+
+
